@@ -17,49 +17,9 @@ const SECRET = process.env.SECRET;
 
 const supabase = createClient(PROJECT_URL, KEY);
 
-app.get("/api", (req, res) => {
-  res.end("hello");
-});
-
-app.post("/api/tweets", async (req, res) => {
-  const username = req.body.username;
-  const content = req.body.content;
-  const { error } = await supabase
-    .from("tweets")
-    .insert({ username: username, content: content });
-  console.log(error);
-});
-
-app.get("/api/tweets", async (req, res) => {
-  const { data, error } = await supabase.from("tweets").select();
-  res.send(data);
-});
-
-app.post("/api/signup", async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const username = req.body.username;
-  const { error } = await supabase
-    .from("users")
-    .insert({ email: email, password: password, username: username });
-});
-
-app.get("/api/signup", async (req, res) => {
-  const { data, error } = await supabase.from("users").select("username,email");
-  res.send(data);
-});
-
-app.post("/api/login", async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const {data,error} = await supabase.from('users').select().eq('email',email)
-  if(data[0].password===password){
-    res.send(data)
-  }
-  else{
-    res.send(false)
-  }
-});
+app.get("/api", (req,res)=>{
+  res.redirect("https://www.google.com")
+})
 
 app.listen(PORT, () => {
   console.log("server running");
