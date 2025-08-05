@@ -17,9 +17,7 @@ const SECRET = process.env.SECRET;
 
 const supabase = createClient(PROJECT_URL, KEY);
 
-app.get("/api", (req,res)=>{
-  res.redirect("https://www.google.com")
-})
+
 
 app.listen(PORT, () => {
   console.log("server running");
