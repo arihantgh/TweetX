@@ -104,6 +104,170 @@ function Home() {
           </div>
         </div>
       </div>
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-5">
+        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div>
+            <span className="text-blue-400 font-medium">@username</span>
+            <p>content</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline">
+              <Heart />
+              20
+            </Button>
+            <Button variant="outline">
+              <MessageCircle />
+              10
+            </Button>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
