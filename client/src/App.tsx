@@ -6,7 +6,7 @@ import Signup from "./components/Signup";
 function App() {
   const router = createBrowserRouter([
     {
-      path: "/",
+      path: "/home",
       element: <Home />
     },
     {

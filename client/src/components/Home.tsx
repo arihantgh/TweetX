@@ -7,7 +7,7 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { Heart, MessageCircle, Moon, Sun } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Textarea } from "./ui/textarea";
 import {
   DropdownMenu,
@@ -15,13 +15,64 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-
-
-import { Link } from "react-router";
+import axios from "axios";
 
 function Home() {
+  type Tweet = {
+    id: number;
+    username: string;
+    content: string;
+    likes: number;
+    comments: {};
+  };
+
   const [content, setContent] = useState("");
-  const [dark, setDark] = useState(true);
+  const [dark, setDark]: any = useState();
+  const [username, setUsername] = useState("");
+  const [tweets, setTweets] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BASE_URL}/home`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      })
+      .then((res) => {
+        setUsername(res.data[0][0].username);
+        setTweets(res.data[1]);
+      });
+  }, [setUsername, setTweets]);
+
+  useEffect(() => {
+    const temp:any = localStorage.getItem("dark")
+    const mode = JSON.parse(temp);
+    if (mode === null) {
+      document.getElementById("html")?.classList.add("dark");
+      localStorage.setItem("dark", `${true}`);
+      setDark(true);
+    } else {
+      if (mode === true) {
+        document.getElementById("html")?.classList.add("dark");
+      } else {
+        document.getElementById("html")?.classList.remove("dark");
+      }
+      setDark(mode);
+    }
+  }, []);
+
+  const handleDarkmode = () => {
+    if(dark===true){
+      document.getElementById("html")?.classList.remove("dark");
+      setDark(false)
+      localStorage.setItem("dark",`${false}`)
+    }
+    else{
+      document.getElementById("html")?.classList.add("dark");
+      setDark(true)
+      localStorage.setItem("dark",`${true}`)
+    }
+  };
 
   return (
     <>
@@ -31,13 +82,11 @@ function Home() {
           <DropdownMenu>
             <DropdownMenuTrigger className="outline-none">
               <span className="font-medium text-blue-400 text-lg">
-                @{"username"}
+                @{username}
               </span>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
-                <Link to={`/profile/${"username"}`}>Profile</Link>
-              </DropdownMenuItem>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem className="text-red-500 focus:text-red-500">
                 Logout
               </DropdownMenuItem>
@@ -45,7 +94,7 @@ function Home() {
           </DropdownMenu>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setDark(!dark)}>
+          <Button variant="outline" onClick={handleDarkmode}>
             {dark ? <Sun /> : <Moon />}
           </Button>
           <Dialog>
@@ -73,7 +122,7 @@ function Home() {
                     Character limit exceeded!
                   </p>
                 ) : (
-                  <p></p>
+                  ""
                 )}
                 <Button
                   disabled={!(content.length > 0 && content.length < 151)}
@@ -86,25 +135,28 @@ function Home() {
           </Dialog>
         </div>
       </div>
-
-      <div className="p-5">
-        <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
-          <div>
-            <span className="text-blue-400 font-medium">@username</span>
-            <p>content</p>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline">
-              <Heart />
-              20
-            </Button>
-            <Button variant="outline">
-              <MessageCircle />
-              10
-            </Button>
+      {tweets.map((tweet: Tweet) => (
+        <div className="p-5" key={tweet.id}>
+          <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+            <div>
+              <span className="text-blue-400 font-medium">
+                @{tweet.username}
+              </span>
+              <p>{tweet.content}</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline">
+                <Heart />
+                {tweet.likes}
+              </Button>
+              <Button variant="outline">
+                <MessageCircle />
+                {Object.keys(tweet.comments).length}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      ))}
     </>
   );
 }
