@@ -22,14 +22,19 @@ const supabase = createClient(PROJECT_URL, KEY);
 const auth = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if(!token) return res.send("no auth")
+  if (!token) return res.send("no auth");
 
-  jwt.verify(token,SECRET,(err,username)=>{
-    if(err) return res.send("no auth")
-    req.username=username
-    next()
-  })
+  jwt.verify(token, SECRET, (err, username) => {
+    if (err) return res.send("no auth");
+    req.username = username;
+    next();
+  });
 };
+
+app.post("/api/signup",async (req,res)=>{
+  const {email,password,username} = req.body
+  const {error} = await supabase.from("users").insert({email:email,password:password,username:username})
+})
 
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
@@ -46,9 +51,35 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.get("/api/home", auth, async (req, res) => {
-  const {data,error} = await supabase.from('tweets').select()
-  res.send([[{username:req.username.username}],[...data]])
+  const { data, error } = await supabase.from("tweets").select();
+  res.send([[{ username: req.username.username }], [...data]]);
 });
+
+app.post("/api/tweet", auth, async (req, res) => {
+  const content = req.body.content;
+  const { error } = await supabase
+    .from("tweets")
+    .insert({ username: req.username.username, content: content });
+});
+
+app.post("/api/delete",async (req, res) => {
+  const tweetid = req.body.tweetid;
+  const { error } = await supabase.from("tweets").delete().eq("id", tweetid);
+});
+
+app.post("/api/like",async (req,res)=>{
+  const {tweetid,username} = req.body
+  let {data,error} = await supabase.from("tweets").select("likes").eq("id",tweetid)
+  const likesarr = data[0].likes
+  await supabase.from("tweets").update({likes:[...likesarr,username]}).eq("id",tweetid) 
+})
+
+app.post("/api/comment",async (req,res)=>{
+  const {tweetid,comment,username} = req.body
+  let {data,error} = await supabase.from("tweets").select("comments").eq("id",tweetid)
+  const commentarr = data[0].comments
+  await supabase.from("tweets").update({comments:[...commentarr,{"username":username,"comment":comment}]}).eq("id",tweetid) 
+})
 
 app.listen(PORT, () => {
   console.log("server running");
