@@ -48,20 +48,6 @@ function Home() {
   const [comment, setComment] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BASE_URL}/home`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      })
-      .then((res) => {
-        setUsername(res.data[0][0].username);
-        setTweets(res.data[1]);
-      });
-      console.log("chala")
-  }, [postcount]);
-
-  useEffect(() => {
     const temp: any = localStorage.getItem("dark");
     const mode = JSON.parse(temp);
     if (mode === null) {
@@ -77,6 +63,19 @@ function Home() {
       setDark(mode);
     }
   }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BASE_URL}/home`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      })
+      .then((res) => {
+        setUsername(res.data[0][0].username);
+        setTweets(res.data[1]);
+      });
+  }, [postcount]);
 
   const handleDarkmode = () => {
     if (dark === true) {
@@ -188,7 +187,9 @@ function Home() {
           <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
             <div>
               <div className="flex justify-between items-center">
-                <p className="text-blue-400 font-medium py-2">@{tweet.username}</p>
+                <p className="text-blue-400 font-medium py-2">
+                  @{tweet.username}
+                </p>
                 {username === tweet.username ? (
                   <Button
                     onClick={() => {
@@ -209,18 +210,9 @@ function Home() {
               <p>{tweet.content}</p>
             </div>
             <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  axios.post(`${import.meta.env.VITE_BASE_URL}/like`, {
-                    tweetid: tweet.id,
-                    username: username
-                  });
-                  setPostcount(postcount + 1);
-                }}
-              >
+              <Button variant="outline">
                 <Heart />
-                {tweet.likes ? tweet.likes.length : 0}
+                todo
               </Button>
 
               <Dialog>
@@ -247,10 +239,10 @@ function Home() {
                         axios.post(`${import.meta.env.VITE_BASE_URL}/comment`, {
                           tweetid: tweet.id,
                           username: username,
-                          comment:comment
+                          comment: comment
                         });
-                        setPostcount(postcount + 1);
                         setComment("");
+                        setPostcount(postcount + 1);
                       }}
                     >
                       Send
