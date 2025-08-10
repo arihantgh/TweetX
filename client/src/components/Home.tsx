@@ -44,8 +44,8 @@ function Home() {
   const [dark, setDark]: any = useState();
   const [username, setUsername] = useState("");
   const [tweets, setTweets] = useState([]);
-  const [postcount, setPostcount] = useState(0);
   const [comment, setComment] = useState("");
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const temp: any = localStorage.getItem("dark");
@@ -74,8 +74,9 @@ function Home() {
       .then((res) => {
         setUsername(res.data[0][0].username);
         setTweets(res.data[1]);
+        console.log(res.data[1])
       });
-  }, [postcount]);
+  }, [count]);
 
   const handleDarkmode = () => {
     if (dark === true) {
@@ -100,17 +101,45 @@ function Home() {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       }
-    );
+    ).then(()=>setCount(count+1));
     setContent("");
-    setPostcount(postcount + 1);
   };
 
   const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+  const handleDelete = async (id:number) => {
+    axios.post(
+      `${import.meta.env.VITE_BASE_URL}/delete`,
+      {
+        tweetid: id
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    ).then(()=>setCount(count+1));
+  }
+
+  const handleComment = async (id:any) => {
+    axios.post(
+      `${import.meta.env.VITE_BASE_URL}/comment`,
+      {
+        tweetid: id,
+        comment:comment
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    ).then(()=>setCount(count+1));
+    setComment("")
+  }
 
   return (
     <>
@@ -163,7 +192,7 @@ function Home() {
                 >
                   Add Image
                 </Button>
-                {content.length > 150 ? (
+                {content.length > 500 ? (
                   <p className="text-sm text-red-500">
                     Character limit exceeded!
                   </p>
@@ -171,12 +200,12 @@ function Home() {
                   ""
                 )}
                 <Button
-                  disabled={!(content.length > 0 && content.length < 151)}
+                  disabled={!(content.length > 0 && content.length < 501)}
                   onClick={handleTweet}
                 >
                   Post
                 </Button>
-                <p>{content.length}/150</p>
+                <p>{content.length}/500</p>
               </DialogContent>
             </form>
           </Dialog>
@@ -184,7 +213,7 @@ function Home() {
       </div>
       {tweets.map((tweet: Tweet) => (
         <div className="pb-5 px-5" key={tweet.id}>
-          <div className="bg-primary-foreground rounded-md p-5 gap-2 border">
+          <div className="bg-muted rounded-md p-5 gap-2 border">
             <div>
               <div className="flex justify-between items-center">
                 <p className="text-blue-400 font-medium py-2">
@@ -192,12 +221,7 @@ function Home() {
                 </p>
                 {username === tweet.username ? (
                   <Button
-                    onClick={() => {
-                      axios.post(`${import.meta.env.VITE_BASE_URL}/delete`, {
-                        tweetid: tweet.id
-                      });
-                      setPostcount(postcount + 1);
-                    }}
+                  onClick={()=>handleDelete(tweet.id)}
                     variant="ghost"
                     className="text-red-500 hover:text-red-400"
                   >
@@ -212,9 +236,8 @@ function Home() {
             <div className="flex justify-end gap-2">
               <Button variant="outline">
                 <Heart />
-                todo
+                {tweet.likes ? tweet.likes.length : 0}
               </Button>
-
               <Dialog>
                 <DialogTrigger>
                   <Button variant="outline">
@@ -222,7 +245,7 @@ function Home() {
                     {tweet.comments ? tweet.comments.length : 0}
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="overflow-y-auto max-h-3/4">
                   <DialogHeader>
                     <DialogTitle className="text-xl">Comments</DialogTitle>
                   </DialogHeader>
@@ -234,24 +257,12 @@ function Home() {
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
                     />
-                    <Button
-                      onClick={() => {
-                        axios.post(`${import.meta.env.VITE_BASE_URL}/comment`, {
-                          tweetid: tweet.id,
-                          username: username,
-                          comment: comment
-                        });
-                        setComment("");
-                        setPostcount(postcount + 1);
-                      }}
-                    >
-                      Send
-                    </Button>
+                    <Button onClick={()=>{handleComment(tweet.id)}}>Send</Button>
                   </div>
                   <div>
                     {tweet.comments.length > 0 ? (
                       tweet.comments.map((comment: Comment) => (
-                        <div className="flex gap-2 border rounded-md p-2 mb-2">
+                        <div className="flex gap-2 border rounded-md p-2 mb-2 bg-muted">
                           <p className="text-blue-400 font-medium">
                             @{comment.username}
                           </p>
@@ -259,7 +270,9 @@ function Home() {
                         </div>
                       ))
                     ) : (
-                      <div>No comments</div>
+                      <div className="flex justify-center p-5">
+                        <p>No comments</p>
+                      </div>
                     )}
                   </div>
                 </DialogContent>
