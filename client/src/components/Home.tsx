@@ -235,14 +235,14 @@ function Home() {
               <p>{tweet.content}</p>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline">
+              <Button variant="outline" size="sm">
                 <Heart />
                 {tweet.likes ? tweet.likes.length : 0}
                 -todo
               </Button>
               <Dialog>
                 <DialogTrigger>
-                  <Button variant="outline">
+                  <Button variant="outline" size="sm">
                     <MessageCircle />
                     {tweet.comments ? tweet.comments.length : 0}
                   </Button>
