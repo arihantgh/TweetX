@@ -155,6 +155,10 @@ function Home() {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center justify-between" onClick={handleDarkmode}>
+                <p>Mode</p>
+                <p>{!dark ? <Sun /> : <Moon />}</p>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500 focus:text-red-400"
                 onClick={handleLogout}
@@ -164,10 +168,7 @@ function Home() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleDarkmode}>
-            {dark ? <Sun /> : <Moon />}
-          </Button>
+        <div>
           <Dialog>
             <form>
               <DialogTrigger asChild>
@@ -237,6 +238,7 @@ function Home() {
               <Button variant="outline">
                 <Heart />
                 {tweet.likes ? tweet.likes.length : 0}
+                -todo
               </Button>
               <Dialog>
                 <DialogTrigger>
@@ -257,7 +259,7 @@ function Home() {
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
                     />
-                    <Button onClick={()=>{handleComment(tweet.id)}}>Send</Button>
+                    <Button onClick={()=>{handleComment(tweet.id)}} disabled={!(comment.length>0)}>Send</Button>
                   </div>
                   <div>
                     {tweet.comments.length > 0 ? (
