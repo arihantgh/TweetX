@@ -4,12 +4,18 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate()
+
   useEffect(() => {
+    if(localStorage.getItem("token")){
+      navigate("/home")
+    }
     const temp: any = localStorage.getItem("dark");
     const mode = JSON.parse(temp);
     if (mode === null) {
@@ -23,7 +29,9 @@ function Login() {
     }
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = (e:any) => {
+    console.log(email.toLowerCase())
+    e.preventDefault();
     axios
       .post(`${import.meta.env.VITE_BASE_URL}/login`, {
         email: email,
@@ -38,11 +46,12 @@ function Login() {
       <div className="flex justify-center items-center h-screen">
         <Card className="w-4/5 max-w-sm">
           <CardHeader className="justify-center">
-            <CardTitle className="text-2xl border-b-2 pb-2 border-blue-500">
+            <CardTitle className="text-2xl">
               Login
             </CardTitle>
           </CardHeader>
           <CardContent>
+          <form onSubmit={handleLogin}>
             <div className="grid gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -51,7 +60,7 @@ function Login() {
                   type="email"
                   placeholder="Enter email"
                   required
-                  value={email}
+                  value={email.toLowerCase()}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -67,14 +76,14 @@ function Login() {
                 />
               </div>
               <Button
-                type="button"
+                type="submit"
                 className="w-full"
                 disabled={!(email.length > 0 && password.length > 0)}
-                onClick={handleLogin}
               >
                 Login
               </Button>
             </div>
+            </form>
           </CardContent>
         </Card>
       </div>

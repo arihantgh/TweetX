@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Moon,
   Sun,
+  ThumbsUp,
   Trash2
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -31,7 +32,7 @@ function Home() {
     id: number;
     username: string;
     content: string;
-    likes: [];
+    likes: string[];
     comments: [];
   };
 
@@ -39,6 +40,7 @@ function Home() {
     username: string;
     comment: string;
   };
+
 
   const [content, setContent] = useState("");
   const [dark, setDark]: any = useState();
@@ -90,7 +92,8 @@ function Home() {
     }
   };
 
-  const handleTweet = async () => {
+  const handleTweet = async (e: any) => {
+    e.preventDefault();
     axios.post(
       `${import.meta.env.VITE_BASE_URL}/tweet`,
       {
@@ -101,7 +104,7 @@ function Home() {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       }
-    ).then(()=>setCount(count+1));
+    ).then(() => setCount(count + 1));
     setContent("");
   };
 
@@ -111,7 +114,7 @@ function Home() {
     navigate("/login");
   };
 
-  const handleDelete = async (id:number) => {
+  const handleDelete = async (id: number) => {
     axios.post(
       `${import.meta.env.VITE_BASE_URL}/delete`,
       {
@@ -122,23 +125,51 @@ function Home() {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       }
-    ).then(()=>setCount(count+1));
+    ).then(() => setCount(count + 1));
   }
 
-  const handleComment = async (id:any) => {
+  const handleComment = async (id: any) => {
     axios.post(
       `${import.meta.env.VITE_BASE_URL}/comment`,
       {
         tweetid: id,
-        comment:comment
+        comment: comment
       },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       }
-    ).then(()=>setCount(count+1));
+    ).then(() => setCount(count + 1));
     setComment("")
+  }
+
+  const handleLike = async (id:number) => {
+    axios.post(
+      `${import.meta.env.VITE_BASE_URL}/like`,
+      {
+        tweetid: id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    )
+  }
+
+  const handleUnlike = async (id:number) => {
+    axios.post(
+      `${import.meta.env.VITE_BASE_URL}/unlike`,
+      {
+        tweetid: id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    )
   }
 
   return (
@@ -170,14 +201,15 @@ function Home() {
         </div>
         <div>
           <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button variant="default">Post</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle className="text-xl">Post on TweetX</DialogTitle>
-                </DialogHeader>
+
+            <DialogTrigger asChild>
+              <Button variant="default">Post</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle className="text-xl">Post on TweetX</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleTweet}>
                 <div className="grid gap-4">
                   <Textarea
                     value={content}
@@ -185,30 +217,23 @@ function Home() {
                     spellCheck={false}
                     placeholder="What's happening?"
                   />
+                  {content.length > 500 ? (
+                    <p className="text-sm text-red-500">
+                      Character limit exceeded!
+                    </p>
+                  ) : (
+                    ""
+                  )}
+                  <Button
+                    type="submit"
+                    disabled={!(content.length > 0 && content.length < 501)}
+                  >
+                    Post
+                  </Button>
+                  <p>{content.length}/500</p>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-fit font-normal"
-                  disabled
-                >
-                  Add Image
-                </Button>
-                {content.length > 500 ? (
-                  <p className="text-sm text-red-500">
-                    Character limit exceeded!
-                  </p>
-                ) : (
-                  ""
-                )}
-                <Button
-                  disabled={!(content.length > 0 && content.length < 501)}
-                  onClick={handleTweet}
-                >
-                  Post
-                </Button>
-                <p>{content.length}/500</p>
-              </DialogContent>
-            </form>
+              </form>
+            </DialogContent>
           </Dialog>
         </div>
       </div>
@@ -222,7 +247,7 @@ function Home() {
                 </p>
                 {username === tweet.username ? (
                   <Button
-                  onClick={()=>handleDelete(tweet.id)}
+                    onClick={() => handleDelete(tweet.id)}
                     variant="ghost"
                     className="text-red-500 hover:text-red-400"
                   >
@@ -235,14 +260,17 @@ function Home() {
               <p>{tweet.content}</p>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" size="sm">
-                <Heart />
-                {tweet.likes ? tweet.likes.length : 0}
-                -todo
-              </Button>
+              {tweet.likes.includes(username) ?
+                <Button variant="like" size="sm" onClick={()=>handleLike(tweet.id)}>
+                  <Heart />
+                  {tweet.likes ? tweet.likes.length : 0}
+                </Button> : <Button variant="ghost" size="sm" className="hover:text-red-500" onClick={()=>handleUnlike(tweet.id)}>
+                  <ThumbsUp />
+                  {tweet.likes ? tweet.likes.length : 0}
+                </Button>}
               <Dialog>
                 <DialogTrigger>
-                  <Button variant="outline" size="sm">
+                  <Button variant="ghost" size="sm">
                     <MessageCircle />
                     {tweet.comments ? tweet.comments.length : 0}
                   </Button>
@@ -259,7 +287,7 @@ function Home() {
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
                     />
-                    <Button onClick={()=>{handleComment(tweet.id)}} disabled={!(comment.length>0)}>Send</Button>
+                    <Button onClick={() => { handleComment(tweet.id) }} disabled={!(comment.length > 0)}>Send</Button>
                   </div>
                   <div>
                     {tweet.comments.length > 0 ? (
